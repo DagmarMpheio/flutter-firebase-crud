@@ -24,12 +24,22 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isObscure = true;
+  bool isValidated = false;
+
+//ouvinte de valores
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text("Login")),
+        /* appBar: AppBar(title: const Text("Login")),*/
         backgroundColor: Colors.white,
         body: StreamBuilder<User?>(
           stream: FirebaseAuth.instance.authStateChanges(),
@@ -66,7 +76,7 @@ class _LoginViewState extends State<LoginView> {
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             validator: (email) =>
-                                email != null && EmailValidator.validate(email)
+                                email != null && !isEmailValid(email)
                                     ? "Insira um email válido"
                                     : null,
                           ),
@@ -108,25 +118,36 @@ class _LoginViewState extends State<LoginView> {
                           child: SizedBox(
                             width: double.infinity,
                             height: 40,
-                            child: ElevatedButton.icon(
-                              label: const Text(
-                                "Login",
-                                style: TextStyle(fontSize: 24),
-                              ),
-                              icon: const Icon(Icons.lock_open, size: 32),
-                              onPressed: (_emailController.text.isNotEmpty &&
-                                      _senhaController.text.isNotEmpty)
-                                  ? () {
-                                      final isValid =
-                                          _formKey.currentState!.validate();
-                                      if (!isValid) return;
+                            child: ValueListenableBuilder<TextEditingValue>(
+                              valueListenable: _emailController,
+                              builder: (context, value, child) {
+                                return ValueListenableBuilder<TextEditingValue>(
+                                  valueListenable: _senhaController,
+                                  builder: (context, value, child) {
+                                    return ElevatedButton.icon(
+                                      label: const Text(
+                                        "Login",
+                                        style: TextStyle(fontSize: 24),
+                                      ),
+                                      icon:
+                                          const Icon(Icons.lock_open, size: 32),
+                                      onPressed: value.text.isNotEmpty
+                                          ? () {
+                                              final isValid = _formKey
+                                                  .currentState!
+                                                  .validate();
+                                              if (!isValid) return;
 
-                                      //add a funcao
-                                      dadorViewModel.login(
-                                          _emailController.text,
-                                          _senhaController.text);
-                                    }
-                                  : null,
+                                              //add a funcao
+                                              dadorViewModel.login(
+                                                  _emailController.text,
+                                                  _senhaController.text);
+                                            }
+                                          : null,
+                                    );
+                                  },
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -172,5 +193,12 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
+  }
+
+//verificar se o email eh valido
+  bool isEmailValid(String email) {
+    return RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(email);
   }
 }

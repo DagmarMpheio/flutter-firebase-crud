@@ -29,6 +29,7 @@ class DadorViewModel extends GetxController {
     dadorModel.senha = senha;
 
     Get.defaultDialog(
+      title: "Processando",
       barrierDismissible: false,
       content: const Center(child: CircularProgressIndicator()),
     );

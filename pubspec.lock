@@ -331,6 +331,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  multi_value_listenable_builder:
+    dependency: "direct main"
+    description:
+      name: multi_value_listenable_builder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.2"
   path:
     dependency: transitive
     description:
