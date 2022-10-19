@@ -163,7 +163,7 @@ class _LoginViewState extends State<LoginView> {
                               TextButton(
                                 onPressed: () {
                                   //forgot password
-                                  Get.to(() => const ForgotPasswordView());
+                                  Get.to(()=>const ForgotPasswordView());
                                 },
                                 child: Text(
                                   "Esqueci a senha",

@@ -51,7 +51,6 @@ class DadorViewModel extends GetxController {
     Get.back(closeOverlays: true);
   }
 
-
 /* registerUser({required String email, required String senha}) async {
     Get.defaultDialog(
       barrierDismissible: false,
@@ -80,12 +79,15 @@ class DadorViewModel extends GetxController {
 
   forgotPassword(String email) async {
     Get.defaultDialog(
-      barrierDismissible: false,
+      title: "Processando",
+      barrierDismissible: true,
       content: const Center(child: CircularProgressIndicator()),
     );
 
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
+
+      Get.back(closeOverlays: true);
 
       Get.snackbar(
         "Reposição de Senha",
@@ -93,8 +95,6 @@ class DadorViewModel extends GetxController {
         colorText: Colors.white,
         backgroundColor: Colors.green,
       );
-
-      Get.back(closeOverlays: true);
     } on FirebaseAuthException catch (error) {
       Get.snackbar(
         "Reposição de Senha",
@@ -102,16 +102,14 @@ class DadorViewModel extends GetxController {
         colorText: Colors.white,
         backgroundColor: Colors.red,
       );
-
-      Get.back(closeOverlays: true);
     }
   }
 
   sendVerificationEmail() async {
-    try{
+    try {
       final user = FirebaseAuth.instance.currentUser!;
-    await user.sendEmailVerification();
-    }catch(error){
+      await user.sendEmailVerification();
+    } catch (error) {
       Get.snackbar(
         "Verificação de Email",
         error.toString(),
@@ -121,32 +119,44 @@ class DadorViewModel extends GetxController {
 
       Get.back(closeOverlays: true);
     }
-    
   }
 
   fetchAllDador() async {
-    isLoading.value = true;
-    allDadoresList.clear();
-    await FirebaseFirestore.instance
-        .collection("dadores")
-        .get()
-        .then((QuerySnapshot snapshot) {
-      for (var u in snapshot.docs) {
-        allDadoresList.add(DadorModel(
-          id: u['id'],
-          name: u['name'],
-          email: u['email'],
-          mobileCode: u['mobileCode'],
-          telefone: u['telefone'],
-          provincia: u['provincia'],
-          grupoSanguineo: u['grupoSanguineo'],
-          profilePicture: u['profilePicture'],
-        ));
-      }
-      if (allDadoresList != null) {
-        isLoading.value = false;
-      }
-    });
+    /* Get.defaultDialog(
+      title: "Processando",
+      barrierDismissible: false,
+      content: const Center(child: CircularProgressIndicator()),
+    ); */
+    try {
+      allDadoresList.clear();
+      await FirebaseFirestore.instance
+          .collection("dadores")
+          .get()
+          .then((QuerySnapshot snapshot) {
+        for (var u in snapshot.docs) {
+          allDadoresList.add(DadorModel(
+            id: u['id'],
+            name: u['name'],
+            email: u['email'],
+            mobileCode: u['mobileCode'],
+            telefone: u['telefone'],
+            provincia: u['provincia'],
+            grupoSanguineo: u['grupoSanguineo'],
+            profilePicture: u['profilePicture'],
+          ));
+        }
+      });
+    } catch (error) {
+      /* Get.snackbar(
+        "Lista de Dadores",
+        "Algo ocorreu mal\n Erro: $error.toString()",
+        colorText: Colors.white,
+        backgroundColor: Colors.red,
+      ); */
+
+      //Get.back(closeOverlays: true);
+    }
+    //Get.back(closeOverlays: true);
   }
 
   addDador(
@@ -160,8 +170,9 @@ class DadorViewModel extends GetxController {
       String grupoSanguineo) async {
     isLoading.value = true;
 
-    UserCredential result= await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email.trim(), password: senha.trim());
+    UserCredential result = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: email.trim(), password: senha.trim());
     User? user = result.user;
 
     //upload das imagens

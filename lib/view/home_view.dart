@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_app/view/dador_view.dart';
+import 'package:get/get.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -29,6 +31,23 @@ class _HomeViewState extends State<HomeView> {
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 40),
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: TextButton.icon(
+                    onPressed: () => Get.to(() => const DadorView()),
+                    icon: const Icon(Icons.list_alt),
+                    style: TextButton.styleFrom(
+                        side: BorderSide(color: Theme.of(context).primaryColor)),
+                    label: const Text(
+                      "Ver Dadores",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
+              ),
+              const SizedBox(height: 20),
               ElevatedButton.icon(
                 icon: const Icon(Icons.arrow_back, size: 32),
                 style: ElevatedButton.styleFrom(

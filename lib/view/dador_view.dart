@@ -20,65 +20,64 @@ class _DadorViewState extends State<DadorView> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(title: const Text("Lista de Dadores")),
-        body: Obx(
-          () => LoadingOverlay(
-            isLoading: dadorViewModel.isLoading.value,
-            child: Container(
-              margin: const EdgeInsets.all(8),
-              child: ListView.builder(
-                  itemCount: dadorViewModel.allDadoresList.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Get.to(const DadorUpdateView(),
-                            arguments: dadorViewModel.allDadoresList[index]);
-                      },
-                      child: Row(
-                        children: <Widget>[
-                          Container(
-                            height: 50,
-                            width: 50,
+        body: Container(
+          margin: const EdgeInsets.all(8),
+          child: ListView.builder(
+              itemCount: dadorViewModel.allDadoresList.length,
+              itemBuilder: (context, index) {
+                if (dadorViewModel.allDadoresList.isNotEmpty) {
+                  return InkWell(
+                    onTap: () {
+                      Get.to(const DadorUpdateView(),
+                          arguments: dadorViewModel.allDadoresList[index]);
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          height: 50,
+                          width: 50,
+                          margin: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            image: DecorationImage(
+                              image: NetworkImage(dadorViewModel
+                                  .allDadoresList[index].profilePicture!),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
                             margin: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              image: DecorationImage(
-                                image: NetworkImage(dadorViewModel
-                                    .allDadoresList[index].profilePicture!),
-                                fit: BoxFit.cover,
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                    dadorViewModel.allDadoresList[index].name!),
+                                Text(dadorViewModel
+                                    .allDadoresList[index].email!),
+                              ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              margin: const EdgeInsets.all(8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(dadorViewModel
-                                      .allDadoresList[index].name!),
-                                  Text(dadorViewModel
-                                      .allDadoresList[index].email!),
-                                ],
-                              ),
-                            ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            dadorViewModel.deleteDador(
+                                dadorViewModel.allDadoresList[index]);
+                          },
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.red,
+                            size: 32,
                           ),
-                          InkWell(
-                            onTap: () {
-                              dadorViewModel.deleteDador(
-                                  dadorViewModel.allDadoresList[index]);
-                            },
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.red,
-                              size: 32,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-            ),
-          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              }),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
